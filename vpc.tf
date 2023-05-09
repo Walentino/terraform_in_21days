@@ -1,7 +1,7 @@
 locals {
-  public_cidr = ["10.0.0.0/24","10.0.1.0/24","10.0.2.0/24"]
-  private_cidr = ["10.0.100.0/24","10.0.101.0/24","10.0.103.0/24"]
-  availability_zones = ["us-east-1a", "us-east-1b","us-east-1c"]
+  public_cidr        = ["10.0.0.0/24", "10.0.1.0/24", "10.0.2.0/24"]
+  private_cidr       = ["10.0.100.0/24", "10.0.101.0/24", "10.0.103.0/24"]
+  availability_zones = ["us-east-1a", "us-east-1b", "us-east-1c"]
 }
 
 resource "aws_vpc" "main" {
@@ -15,24 +15,24 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public" {
   count = length(local.public_cidr)
 
-  vpc_id     = aws_vpc.main.id
-  cidr_block = local.public_cidr[count.index]
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.public_cidr[count.index]
   availability_zone = local.availability_zones[count.index]
 
   tags = {
-    Name = "public${count.index+1}"
+    Name = "public${count.index + 1}"
   }
 }
 
 resource "aws_subnet" "private" {
   count = length(local.private_cidr)
 
-  vpc_id     = aws_vpc.main.id
-  cidr_block = local.private_cidr[count.index]
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = local.private_cidr[count.index]
   availability_zone = local.availability_zones[count.index]
 
   tags = {
-    Name = "private${count.index+1}"
+    Name = "private${count.index + 1}"
   }
 }
 
@@ -68,10 +68,10 @@ resource "aws_route_table_association" "public" {
 resource "aws_eip" "nat" {
   count = length(local.public_cidr)
 
-  vpc      = true
+  vpc = true
 
   tags = {
-    Name = "nat${count.index+1}"
+    Name = "nat${count.index + 1}"
   }
 }
 
@@ -82,7 +82,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id     = aws_subnet.public[count.index].id
 
   tags = {
-    Name = "main${count.index+1}"
+    Name = "main${count.index + 1}"
   }
 
   # To ensure proper ordering, it is recommended to add an explicit dependency
@@ -96,12 +96,12 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.main[count.index].id
   }
 
   tags = {
-    Name = "private${count.index+1}"
+    Name = "private${count.index + 1}"
   }
 }
 
