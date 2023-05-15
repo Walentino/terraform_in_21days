@@ -52,6 +52,7 @@ resource "aws_security_group" "public" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = [var.mypublicip]
+
   }
   ingress {
     description = "HTTP from public"
