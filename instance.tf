@@ -1,7 +1,3 @@
-locals {
-  mypublicip = sensitive(file("~/.sshmypublic.txt"))
-}
-
 data "aws_ami" "amazonlinux" {
   most_recent = true
 
@@ -25,7 +21,7 @@ resource "aws_instance" "public" {
   instance_type               = "t2.micro"
   key_name                    = "terra_main"
   vpc_security_group_ids      = [aws_security_group.public.id]
-  subnet_id                   = [aws_subnet.public[0].id]
+  subnet_id                   = aws_subnet.public[0].id
   user_data                   = file("user-data.sh")
   tags = {
     Name = "${var.env_code}-public"
@@ -48,14 +44,14 @@ resource "aws_instance" "private" {
 resource "aws_security_group" "public" {
   name        = "${var.env_code}-publicSG"
   description = "Allow SSH traffic"
-  vpc         = aws_vpc.main.id
+  vpc_id      = aws_vpc.main.id
 
   ingress {
     description = "SSH from public"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["local.mypublicip"]
+    cidr_blocks = [var.mypublicip]
   }
   ingress {
     description = "HTTP from public"
