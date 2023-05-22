@@ -15,7 +15,7 @@ data "aws_ami" "amazonlinux" {
 
 
 resource "aws_instance" "public" {
-  
+
   ami                         = data.aws_ami.amazonlinux.id
   associate_public_ip_address = true
   instance_type               = "t2.micro"
@@ -29,12 +29,12 @@ resource "aws_instance" "public" {
 }
 
 resource "aws_instance" "private" {
- 
-  ami                         = data.aws_ami.amazonlinux.id
-  instance_type               = "t2.micro"
-  key_name                    = "terra_main"
-  vpc_security_group_ids      = [aws_security_group.private.id]
-  subnet_id                   = aws_subnet.private[0].id
+
+  ami                    = data.aws_ami.amazonlinux.id
+  instance_type          = "t2.micro"
+  key_name               = "terra_main"
+  vpc_security_group_ids = [aws_security_group.private.id]
+  subnet_id              = aws_subnet.private[0].id
 
   tags = {
     Name = "${var.env_code}-private"
@@ -68,7 +68,7 @@ resource "aws_security_group" "public" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  
+
   tags = {
     name = "${var.env_code}-publicSG"
   }
@@ -92,7 +92,7 @@ resource "aws_security_group" "private" {
     to_port     = 0
     protocol    = "tcp"
     cidr_blocks = [var.vpc_cidr]
-  
+
   }
 
   tags = {
