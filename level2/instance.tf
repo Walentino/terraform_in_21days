@@ -82,4 +82,3 @@ resource "aws_security_group" "public" {
     Name = "${var.env_code}-publicSG"
   }
 }
-
